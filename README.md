@@ -1,1 +1,1 @@
-Primeira atividade referente à matéria de linguagem de programação.
+Atividades referente à matéria de linguagem de programação.
