@@ -13,22 +13,46 @@ imprimindo de forma organizada, algo como:
 ou F
 • Telefone: 88888888
 • Você pode colocar um loop nesta função para ler todos os dados
+
+Para ver se você é bom mesmo, no mesmo arquivo, crie uma função
+que recebe como parâmetro o sexo e RETORNA uma lista com todos
+os cadastros do sexo especificado:
+• Dica:
+• A função pode ficar assim:
+
+def busca_usuario_pelo_sexo(sexo):
+#código para fazer a busca por sexo
 """
 def menu():
     while True:
-        print('Digite 1 para preencher o formulário')
-        print('Digite 2 para ler algum formulário')
-        print('Digite 3 para encerrar o progama!')
+        print('Digite 1 para preencher o formulário.')
+        print('Digite 2 para ler os dados do arquivo.')
+        print('Digite 3 para buscar usuarios por sexo.')
+        print('Digite 4 para buscar usuarios nome.')
+        print('Digite 5 para encerrar o progama!.')
 
         try:
             escolha = int(input('Faça sua escolha!:'))
-            if escolha not in [1,2,3]:
+            if escolha not in [1,2,3,4]:
                 raise ValueError('Número inválido! Escolha uma das opções!.')
 
             if escolha == 1:
                 formulario()
             elif escolha == 2:
                 ler()
+            elif escolha == 3:
+                print('1. Para ver pessoas do sexo Masculino.')
+                print('2. Para ver pessoas do sexo Feminino.')
+                try:
+                    opcao = int(input('Faça sua escolha:'))
+                    if opcao == 1:
+                        sexo = 'Masculino'
+                        busca_usuario_pelo_sexo(sexo)
+                    else:
+                        sexo = 'Feminino'
+                        busca_usuario_pelo_sexo(sexo)
+                except Exception as e:
+                    print(f'Ocorreu um erro! {e}')
             else:
                 break
         except Exception as e:
@@ -51,7 +75,7 @@ def formulario():
             if sexo.upper() == 'M':
                 sexo = 'Masculino'
             else:
-                sexo == 'Feminino'
+                sexo = 'Feminino'
             telefone = int(input('Digite seu número de telefone:'))
             cont +=1
         except Exception as e:
@@ -60,37 +84,49 @@ def formulario():
 
         dados_form = f'Nome: {nome} |Idade: {idade} anos|Sexo: {sexo}|Telefone: {telefone}\n'
         if cont == 1:
-            with open('meu_arquivo.txt','w') as arquivo:
+            with open(f'meu_arquivo.txt','w',encoding='utf-8') as arquivo:
                 arquivo.write(dados_form)
                 print('Operacão concluida com êxito!')
-        else:
-            try:
-                escolha_nome = input('Digite o nome do seu arquivo de texto!:')
-            except Exception as e:
-                print(f'Ocorreu um erro! {e}')
 
-            with open(f'{escolha_nome}.txt','w') as arquivo:
-                arquivo.write(dados_form)
+        else:
+            
+            try:
+                with open(f'meu_arquivo.txt','a',encoding='utf-8') as arquivo:
+                    arquivo.write(dados_form)
                 print('Operacão concluida com êxito!')
+            except Exception as e:
+                print(f'Ocorreu um problema! {e}')    
+
+
 
 def ler():
-    while True:
         try:
-            nome_arquivo = input('Digite o nome do arquivo que você deseja ler sem o [.txt]:')
-            with open(f"{nome_arquivo}.txt","r",encoding="utf-8") as arquivo:
-                nomes = arquivo.read()
-                lista = nomes.split('|')
-                for n in lista:
-                    print(n)
-            escolha = input('Deseja continuar a ver informações de arquivos?[S/N]:')
-            while escolha.upper() not in ['S','N']:
-                print('Apenas [S ou N]!!!')
-                escolha = input('Deseja continuar a ver informações de arquivos?[S/N]:')
-            if escolha.upper() == 'N':
-                break
+            with open(f"meu_arquivo.txt","r",encoding="utf-8") as arquivo:
+                linhas = arquivo.readlines()
+
+                for linha in linhas:
+                    dados = linha.split('|')
+
+                    for dado in dados:
+                        print(dado.strip())
+
+
+                    print()
         except Exception as e:
             print(f'Ocorreu um erro! {e}')
             
+
+
+def busca_usuario_pelo_sexo(sexo):
+    try:
+        with open('meu_arquivo.txt') as arquivo:
+            for linha in arquivo.readlines():
+                if f'Sexo: {sexo}' in linha:
+                    print(linha.strip())
+    except Exception as e:
+            print(f'Ocorreu um erro! {e}')
+
+                
 
 
 
