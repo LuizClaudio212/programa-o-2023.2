@@ -44,7 +44,7 @@ def menu():
 
         try:
             escolha = int(input('Faça sua escolha!:'))
-            if escolha not in [1,2,3,4]:
+            if escolha not in [1,2,3,4,5]:
                 raise ValueError('Número inválido! Escolha uma das opções!.')
 
             if escolha == 1:
@@ -68,7 +68,7 @@ def menu():
                 nome = input('Digite o nome para fazer a busca:')
                 nome_procurado = nome
                 busca_usuario_pelo_nome(nome_procurado)
-            else:
+            elif escolha == 5:
                 break
         except Exception as e:
                 print(f'Ocorreu um erro! {e}')
@@ -149,7 +149,7 @@ def busca_usuario_pelo_nome(nome_procurado):
 
                 if f'Nome: {nome_procurado}' in linha:
                     print(linha.strip())
-                    
+
     except Exception as e:
             print(f'Ocorreu um erro! {e}')
 
