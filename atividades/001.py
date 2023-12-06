@@ -22,6 +22,17 @@ os cadastros do sexo especificado:
 
 def busca_usuario_pelo_sexo(sexo):
 #código para fazer a busca por sexo
+
+• No mesmo arquivo, crie uma função que recebe como parâmetro um
+nome, ou parte dele, e RETORNA uma lista com todos os cadastros
+que tenham o nome igual ao valor passado como parâmetro ou
+possuam parte do nome com o valor passado como parâmetro:
+• Ex. Se houver um cadastro com nome “Leonardo” e o parâmetro for
+“leo” deve retornar o cadastro Leonardo
+• Dica:
+• A função pode ficar assim:
+def busca_usuario_pelo_nome(nome_procurado):
+#código para fazer a busca por nome
 """
 def menu():
     while True:
@@ -53,6 +64,10 @@ def menu():
                         busca_usuario_pelo_sexo(sexo)
                 except Exception as e:
                     print(f'Ocorreu um erro! {e}')
+            elif escolha == 4:
+                nome = input('Digite o nome para fazer a busca:')
+                nome_procurado = nome
+                busca_usuario_pelo_nome(nome_procurado)
             else:
                 break
         except Exception as e:
@@ -127,7 +142,16 @@ def busca_usuario_pelo_sexo(sexo):
             print(f'Ocorreu um erro! {e}')
 
                 
+def busca_usuario_pelo_nome(nome_procurado):
+    try:
+        with open('meu_arquivo.txt') as arquivo:
+            for linha in arquivo.readlines():
 
+                if f'Nome: {nome_procurado}' in linha:
+                    print(linha.strip())
+                    
+    except Exception as e:
+            print(f'Ocorreu um erro! {e}')
 
 
 def main():
