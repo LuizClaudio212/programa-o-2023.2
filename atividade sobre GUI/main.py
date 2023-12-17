@@ -5,6 +5,22 @@ informações são necessárias: nome do álbum, ano de lançamento,
 nome da banda/artista, álbum lançamento do artista (sim/não);
 • Criar uma tela que liste todos os álbuns cadastrados na sua base de
 dados.
+
+Versão 2.0
+
+• Criar uma tela de busca de álbuns pelo nome do artista.
+Basicamente, a tela terá um campo de texto e um botão de busca. O
+nome digitado pelo usuário pode corresponder a parte do nome do
+artista. Ex. O usuário digita “ME” e clica em buscar. O sistema retorna
+os álbuns do “METALLICA”, “MEGADETH”, “LIMÃO COM MEL”, etc;
+
+
+
+
+
+
+
+
 """
 
 
@@ -40,13 +56,15 @@ def validar_dados():
     ano_lancamento = inputAno_lancamento.get()
     nome_banda = inputNome_banda.get()
     lancamento_arista = ComboboxAlbum_lancamento.get()
+
+
     if nome_album.strip() == "":
         messagebox.showerror(title="Erro", message="Digite o nome do álbum!")
         booleano = False
-    elif ano_lancamento.strip() == "" or ano_lancamento.isnumeric() == False:
+    elif ano_lancamento.strip() == "" or not ano_lancamento.isnumeric():
         messagebox.showerror(title="Erro", message="Digite um número!")
         booleano = False
-    elif nome_banda.strip() == "" or nome_banda == " ":
+    elif nome_banda.strip() == "":
         messagebox.showerror(title="Erro", message="Digite um nome!")
         booleano = False
     elif lancamento_arista.strip() == "":
@@ -79,6 +97,55 @@ def mostrar_albums():
 
             
     windowTwo.update_idletasks()
+
+
+
+#Criar uma tela de busca de álbuns pelo nome do artista.
+def buscar_nome_artista():
+    global inputNome_artista
+    global windowThree
+    windowThree = Toplevel()
+    windowThree.title("Busque álbuns pelo nome do artista")
+    windowThree.geometry("1000x500")
+
+
+    lblNome_artista = Label(windowThree, text="Digite o nome do artista")
+    lblNome_artista.pack()
+    inputNome_artista = Entry(windowThree, text="Digite o nome do artista", bd=2)
+    inputNome_artista.pack()
+
+    btn4 = Button(windowThree,text="Buscar", command=validar_nome_artista)
+    btn4.pack()
+
+
+
+#Validar a parte de busca de álbuns pelo nome do artista e criar uma nova tela com os álbuns.
+    
+def validar_nome_artista():
+    nome = inputNome_artista.get()
+
+    if nome.strip() == "":
+        messagebox.showerror(title="Erro", message="Digite o nome do artista!")
+        return
+    
+    windowFour = Toplevel()
+    windowFour.title(f"Álbuns do Artista {nome}")
+    windowFour.geometry("1000x500")
+
+    scrollbar = Scrollbar(windowFour)
+    scrollbar.pack(side=RIGHT, fill=Y)
+
+    listbox = Listbox(windowFour, yscrollcommand=scrollbar.set)
+    listbox.pack(fill=BOTH, expand=True)
+
+    scrollbar.config(command=listbox.yview)
+
+
+    with open("albuns_cadastrados.txt", "r", encoding="utf 8") as arquivo:
+        for linha in arquivo.readlines():
+            album = linha.split(",")
+            if nome.lower() in album[2].lower():
+                listbox.insert(END, f"Nome do álbum: {album[0]}, Ano de lançamento do álbum: {album[1]}, Nome da banda/artista: {album[2]}, Álbum lançamento do artista: {album[3]}")
 
 
 
@@ -122,8 +189,15 @@ btn = Button(window, text="Cadastrar álbum", command=validar_dados)
 btn.pack()
 
 #botao de listagem de album
-btn2 = Button(window,text="Listar todos os álbus cadastrados!",command=mostrar_albums)
+btn2 = Button(window,text="Listar todos os álbus cadastrados",command=mostrar_albums)
 btn2.pack()
+
+
+#botao de  criar uma tela de busca de álbuns pelo nome do artista.
+btn3 = Button(window,text='Busca de álbuns pelo nome do artista',command=buscar_nome_artista)
+btn3.pack()
+
+
 
 
 
