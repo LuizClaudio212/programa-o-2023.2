@@ -14,7 +14,11 @@ nome digitado pelo usuário pode corresponder a parte do nome do
 artista. Ex. O usuário digita “ME” e clica em buscar. O sistema retorna
 os álbuns do “METALLICA”, “MEGADETH”, “LIMÃO COM MEL”, etc;
 
-
+Criar uma tela de busca de álbuns pelo ano do álbum. A tela terá um
+radiobutton com as opções: “Anterior a”, “Posterior a”, “Igual a”. E uma
+combobox com a listagem dos anos. Ex. Ao selecionar o radiobutton
+“Anterior a” e a opção de ano 2000. O sistema deve retornar todos os
+álbuns cadastrados com ano até 2000 (2000 incluso).
 
 
 
@@ -40,14 +44,15 @@ def listar_albuns():
     ano_lancamento = inputAno_lancamento.get()
     nome_banda = inputNome_banda.get()
     lancamento_arista = ComboboxAlbum_lancamento.get()
-
-    with open("albuns_cadastrados.txt","a",encoding='utf 8') as arquivo:
-        arquivo.write(f"{nome_album},{ano_lancamento},{nome_banda},{lancamento_arista}\n")
-
-
-    messagebox.showinfo(title="Sucesso", message="Álbum cadastrado com sucesso!")
+    try:
+        with open("albuns_cadastrados.txt","a",encoding="utf-8") as arquivo:
+            arquivo.write(f"{nome_album},{ano_lancamento},{nome_banda},{lancamento_arista}\n")
 
 
+        messagebox.showinfo(title="Sucesso", message="Álbum cadastrado com sucesso!")
+
+    except Exception as e:
+        messagebox.showerror(title="Erro", message=f"Erro ao salvar o álbum: {str(e)}")
 
 #validar os dados do álbum
 def validar_dados():
@@ -61,15 +66,19 @@ def validar_dados():
     if nome_album.strip() == "":
         messagebox.showerror(title="Erro", message="Digite o nome do álbum!")
         booleano = False
+
     elif ano_lancamento.strip() == "" or not ano_lancamento.isnumeric():
-        messagebox.showerror(title="Erro", message="Digite um número!")
+        messagebox.showerror(title="Erro", message="Digite um ano válido!")
         booleano = False
+
     elif nome_banda.strip() == "":
         messagebox.showerror(title="Erro", message="Digite um nome!")
         booleano = False
+
     elif lancamento_arista.strip() == "":
         messagebox.showerror(title="Erro", message="Selecione se e ou não álbum lançamento do artista!")
         booleano = False
+
     if booleano == True:
         listar_albuns()
 
@@ -149,6 +158,91 @@ def validar_nome_artista():
 
 
 
+
+#tela de busca de álbuns pelo ano do álbum.
+
+def buscar_albuns_por_ano():
+    windowFive = Toplevel()
+    windowFive.title("busca de álbuns pelo ano do álbum")
+    windowFive.geometry("1000x500")
+
+
+    varbs = StringVar()
+
+    lblBusca_albuns_por_ano = Label(windowFive, text="Escolha uma das opções:")
+    lblBusca_albuns_por_ano.pack()
+
+    rb_anterior = Radiobutton(windowFive, text="Anterior a", value="A", variable=varbs)
+    rb_anterior.pack()
+
+    rb_posterior = Radiobutton(windowFive, text="Posterior a", value="B", variable=varbs)
+    rb_posterior.pack()
+
+    rb_igual = Radiobutton(windowFive, text="Igual a", value="C", variable=varbs)
+    rb_igual.pack()
+
+    anos_disponiveis = [str(i) for i in range(1900,2024)]
+
+
+
+    lblVer_anos = Label(windowFive,text="Escolha o ano:")
+    lblVer_anos.pack()
+
+
+
+    ComboboxVer_anos = Combobox(windowFive,values=anos_disponiveis)
+    ComboboxVer_anos.pack()
+
+    def on_buscar():
+        ano_escolhido = ComboboxVer_anos.get()
+        if not ano_escolhido:
+            messagebox.showerror(title="Erro", message="Escolha um ano!")
+            return
+        if not varbs.get():
+            messagebox.showerror(title="Erro", message="Preencha alguma das três opções!")
+            return
+        try:
+            buscar_por_ano(varbs.get(), ano_escolhido)
+        except Exception as e:
+            messagebox.showerror(title="Erro", message=str(e))
+
+    btn_buscar = Button(windowFive, text="Buscar", command=on_buscar)
+    btn_buscar.pack()
+
+
+
+#tela mostrando o resultado da busca e álbuns pelo ano
+def buscar_por_ano(opcao, ano_escolhido):
+    windowSix = Toplevel()
+    windowSix.title(f"Álbuns do ano de {ano_escolhido}")
+    windowSix.geometry("1000x500")
+
+    scrollbar = Scrollbar(windowSix)
+    scrollbar.pack(side=RIGHT, fill=Y)
+
+    listbox = Listbox(windowSix, yscrollcommand=scrollbar.set)
+    listbox.pack(fill=BOTH, expand=True)
+
+    scrollbar.config(command=listbox.yview)
+
+    with open("albuns_cadastrados.txt", "r", encoding="utf-8") as arquivo:
+        for linha in arquivo.readlines():
+            album = linha.split(",")
+            try:
+                ano_album = int(album[1].strip())  # Convertendo para inteiro
+                if opcao == "A" and ano_album <= int(ano_escolhido):
+                    listbox.insert(END, f"Nome do álbum: {album[0]}, Ano de lançamento do álbum: {album[1]}, Nome da banda/artista: {album[2]}, Álbum lançamento do artista: {album[3]}")
+                elif opcao == "B" and ano_album >= int(ano_escolhido):
+                    listbox.insert(END, f"Nome do álbum: {album[0]}, Ano de lançamento do álbum: {album[1]}, Nome da banda/artista: {album[2]}, Álbum lançamento do artista: {album[3]}")
+                elif opcao == "C" and ano_album == int(ano_escolhido):
+                    listbox.insert(END, f"Nome do álbum: {album[0]}, Ano de lançamento do álbum: {album[1]}, Nome da banda/artista: {album[2]}, Álbum lançamento do artista: {album[3]}")
+            except ValueError:
+                messagebox.showerror(title="Erro", message="Erro ao processar ano do álbum.")
+
+
+
+#interface do progama
+                
 window = Tk()
 window.title("Sistema de Cadastro de Álbuns")
 window.geometry("600x300")
@@ -199,9 +293,13 @@ btn3.pack()
 
 
 
+#botao de busca de álbuns pelo ano do álbum.
+
+btn4 = Button(window,text="Busca de álbuns pelo ano do álbum", command=buscar_albuns_por_ano)
+btn4.pack()
 
 
 
 
-
+#"travar" a execução da janela atual usando um event loop 
 window.mainloop()
